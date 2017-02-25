@@ -1,4 +1,4 @@
-﻿// 
+// 
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license.
 // 
@@ -345,7 +345,23 @@ namespace Microsoft.Bot.Builder.Dialogs
         /// <param name="descriptions">Descriptions to display for choices.</param>
         public static void Choice<T>(IDialogContext context, ResumeAfter<T> resume, IEnumerable<T> options, string prompt, string retry = null, int attempts = 3, PromptStyle promptStyle = PromptStyle.Auto, IEnumerable<string> descriptions = null)
         {
-            Choice(context, resume, new PromptOptions<T>(prompt, retry, attempts: attempts, options: options.ToList(), promptStyler: new PromptStyler(promptStyle), descriptions: descriptions?.ToList()));
+            List<T> l_options = options.ToList();
+            Shuffle(ref l_options);
+            Choice(context, resume, new PromptOptions<T>(prompt, retry, attempts: attempts, options: l_options, promptStyler: new PromptStyler(promptStyle), descriptions: descriptions?.ToList()));
+        }
+
+        private static void Shuffle<T>(ref List<T> list)
+        {
+            Random rng = new Random();
+            int n = list.Count;
+            while (n > 1)
+            {
+                n--;
+                int k = rng.Next(n + 1);
+                T value = list[k];
+                list[k] = list[n];
+                list[n] = value;
+            }
         }
 
         /// <summary>
